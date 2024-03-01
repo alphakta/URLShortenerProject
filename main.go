@@ -19,9 +19,13 @@ func main() {
 	repo := urlRepository.NewMySQLRepository(db)
 	urlService := url.NewService(repo)
 
+	//route to add url
 	http.HandleFunc("/add", handlers.AddURLHandler(urlService))
+	//route to redirect
 	http.HandleFunc("/", handlers.RedirectHandler(urlService))
+	//route to get stats for all links
 	http.HandleFunc("/stats", handlers.StatsHandler(urlService))
+	//route to get stats by url
 	http.HandleFunc("/stats/", handlers.ClicksHandler(urlService))
 
 	log.Printf("Listening on %s", address)
