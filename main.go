@@ -21,6 +21,8 @@ func main() {
 
 	http.HandleFunc("/add", handlers.AddURLHandler(urlService))
 	http.HandleFunc("/", handlers.RedirectHandler(urlService))
+	http.HandleFunc("/stats", handlers.StatsHandler(urlService))
+	http.HandleFunc("/stats/", handlers.ClicksHandler(urlService))
 
 	log.Printf("Listening on %s", address)
 	log.Fatal(http.ListenAndServe(":8080", nil))

@@ -11,6 +11,9 @@ import (
 type Repository interface {
 	AddURL(longURL string) (string, error)
 	FindLongURL(shortURL string) (string, error)
+	IncrementClicks(shortURL string) error
+	GetTotalLinks() (int, error)
+	GetClicksByID(id string) (int, error)
 }
 
 type mysqlRepository struct {
@@ -68,4 +71,21 @@ func (r *mysqlRepository) FindLongURL(shortURL string) (string, error) {
 	}
 
 	return longURL, nil
+}
+
+func (r *mysqlRepository) IncrementClicks(shortURL string) error {
+	_, err := r.db.Exec("UPDATE urls SET clics = clics + 1 WHERE short_url = ?", shortURL)
+	return err
+}
+
+func (r *mysqlRepository) GetTotalLinks() (int, error) {
+	var total int
+	err := r.db.QueryRow("SELECT COUNT(*) FROM urls").Scan(&total)
+	return total, err
+}
+
+func (r *mysqlRepository) GetClicksByID(id string) (int, error) {
+	var clicks int
+	err := r.db.QueryRow("SELECT clics FROM urls WHERE id = ?", id).Scan(&clicks)
+	return clicks, err
 }
